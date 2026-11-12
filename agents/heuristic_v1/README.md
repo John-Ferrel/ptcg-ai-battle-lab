@@ -25,6 +25,12 @@ excludes `agents/*/card_meta.json`; build submissions locally after generating i
 ## What the policy does
 
 * **MAIN** scores every offered action with card data:
+  * **turn sequencing / attack gate**: `MAIN` is a sequential menu and `ATTACK`
+    ends the turn. Lethal attacks are taken immediately; otherwise any
+    non-attack action with positive marginal value (play / ability / evolve /
+    attach / useful retreat) is exhausted first, and `END` is the last fallback.
+    This mirrors the dominant replay-mined disagreement vs 1400+ pilots
+    (`ATTACK` too early instead of developing).
   * attacks: effective damage (weakness ×2, resistance −30, scaling text such as
     Do the Wave's 20 × benched, tool bonuses such as Brave Bangle), KO bonus
     weighted by prize value / prizes remaining / game win;
@@ -35,7 +41,11 @@ excludes `agents/*/card_meta.json`; build submissions locally after generating i
   * supporter/item sequencing using card text + `supporterPlayed` /
     `stadiumPlayed` / `energyAttached`, hand size and deck belief;
   * retreat when the active is doomed/status-locked and the bench has a ready
-    attacker; `END` is the second-lowest action.
+    attacker.
+* **Deck-search prompts (context 7, ~16% of decisions)** resolve each option
+  through `select.deck[k]` (area 1), the discard pile (area 3) or the revealed
+  `looking` pile (area 12), then rank targets: missing evolution piece →
+  draw/search engine → energy for an unpowered attacker → win condition.
 * **Sub-selections** are value-ranked with context-aware direction: search picks
   the best card (using the revealed `select.deck` when the effect exposes it),
   discard picks the cheapest card, damage targets maximize prize/KO value,
@@ -64,16 +74,22 @@ arena alternates seats; Wilson 95% CI):
 
 | opponent | win rate | 95% CI | illegal | errors | avg decision | max decision |
 |---|---:|---|---:|---:|---:|---:|
-| random_legal | 91.5% (183/200) | [86.8, 94.6] | 0 | 0 | 0.048 ms | 6.3 ms |
-| first_legal | 91.5% (183/200) | [86.8, 94.6] | 0 | 0 | 0.042 ms | 5.0 ms |
-| greedy | 84.5% (169/200) | [78.8, 88.9] | 0 | 0 | 0.052 ms | 6.3 ms |
-| heuristic_v1 (mirror) | 49.0% (98/200) | [42.2, 55.9] | 0 | 0 | 0.083 ms | 5.7 ms |
+| random_legal | 95.0% (190/200) | [91.0, 97.3] | 0 | 0 | 0.060 ms | 3.4 ms |
+| first_legal | 99.0% (198/200) | [96.4, 99.7] | 0 | 0 | 0.049 ms | 1.4 ms |
+| greedy | 96.0% (192/200) | [92.3, 98.0] | 0 | 0 | 0.057 ms | 1.4 ms |
+| heuristic_v1 (mirror) | 46.5% (93/200) | [39.7, 53.4] | 0 | 0 | 0.082 ms | 1.3 ms |
 
-Mirror seat split: 69% as player 0, 29% as player 1. The harness gives the
-`IS_FIRST` choice to player 0, and player 0 chooses to go first; the residual is
-the going-first advantage (seat 0 wins 70% of mirror games), not an asymmetry
-between the two seats' code (both seats run the identical agent). Overall
-98/200 is within noise of 50%.
+Before/after the replay-mined fixes (same deck, same 200-game protocol):
+
+| opponent | before | after | delta |
+|---|---:|---:|---:|
+| random_legal | 88.5% | 95.0% | +6.5 pts |
+| first_legal | 89.0% | 99.0% | +10.0 pts |
+| greedy | 82.5% | 96.0% | +13.5 pts |
+| mirror | 47.5% | 46.5% | −1.0 pt (noise) |
+
+Mirror is seat-balanced after the sequencing fix: seat 0 wins 101/200, seat 1
+wins 99/200; 93/200 for A is within noise of 50%.
 
 Artifacts: `results/policy_v1_vs_{random,first,greedy}.jsonl`,
 `results/policy_v1_mirror.jsonl`, summaries and `results/policy_v1_table.json`.

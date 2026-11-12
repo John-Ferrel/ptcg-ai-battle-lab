@@ -614,6 +614,64 @@ def _card_utility(view: View, cid, for_search=True) -> float:
     return 60.0
 
 
+def _search_pick_value(view: View, cid) -> float:
+    """Value of a card in a deck-search / reveal-to-hand prompt.
+
+    Priority order (from replay divergence mining): missing evolution piece,
+    draw/search engine, energy for an unpowered attacker, then win conditions.
+    """
+    if cid is None:
+        return 20.0
+    c = _card(cid)
+    if not c:
+        return 40.0
+    v = _card_utility(view, cid)
+    t = c.get("t", -1)
+    if t == T_POKEMON:
+        pre_in_play = any(_name(p.get("id")) == c.get("ef") for p in view.in_play(view.me))
+        if c.get("ef") and pre_in_play:
+            v += 260.0  # the missing evolution piece, usable immediately
+            if "festival lead" in _skill_names(cid):
+                v += 60.0
+            if c.get("s2"):
+                v += 40.0
+        elif c.get("b"):
+            evos = _evo_cards_for(view, cid)
+            if any(src == "hand" for _, src in evos):
+                v += 100.0
+            if view.bench_slots() > 0:
+                v += 40.0
+        else:
+            # Evolution card with no pre-evolution in play/hand is not usable yet.
+            if not pre_in_play and not any(_name(h) == c.get("ef") for h in view.hand_ids()):
+                v -= 60.0
+        if c.get("ex") or c.get("mega"):
+            v += 40.0
+        if "festival lead" in _skill_names(cid):
+            v += 80.0
+    elif t == T_SUPPORTER:
+        text = _text(cid)
+        if not view.cur.get("supporterPlayed") and ("draw" in text or "shuffle your hand" in text):
+            v += 120.0 if len(view.hand) <= 5 else 30.0
+        if "search your deck" in text:
+            v += 80.0
+    elif t == T_ITEM:
+        text = _text(cid)
+        if "search your deck" in text or "look at the top" in text:
+            v += 70.0
+        if "draw" in text:
+            v += 30.0
+    elif t in (T_BASIC_ENERGY, T_SPECIAL_ENERGY):
+        if _unenergized_attackers(view) > 0:
+            v += 100.0
+        if _energy_in_hand(view) == 0:
+            v += 30.0
+    elif t == T_STADIUM:
+        if _FESTIVAL in _name(cid).lower() and not view.stadium_is_festival():
+            v += 150.0
+    return v
+
+
 def _supporter_score(view: View, cid) -> float:
     text = _text(cid)
     if "shuffle your hand into your deck" in text:
@@ -1311,7 +1369,7 @@ def _context_values(view: View, ctx: int):
         return vals, False, max(lo, k)
     if ctx == C_TO_HAND:
         k = max(lo, min(hi, n))
-        vals = [_card_utility(view, cid) if cid else 0.0 for cid in ids]
+        vals = [_search_pick_value(view, cid) if cid else 20.0 for cid in ids]
         return vals, False, k
     if ctx == C_DISCARD:
         k = max(lo, min(hi, n))
@@ -1667,11 +1725,33 @@ def _choose_card_context(view: View, ctx: int, opts) -> list[int]:
     return _choose_by_values(view, vals, False, k)
 
 
+def _attack_is_lethal(view: View, opt: dict) -> bool:
+    """True when this MAIN attack would KO the opposing Active right now."""
+    info = _attack_info(opt.get("attackId"))
+    active = view.my_active()
+    opp = view.op_active()
+    if not info or not active or not opp:
+        return False
+    dmg = _damage_estimate(
+        active.get("id"),
+        info,
+        opp.get("id"),
+        active,
+        len(view.my_bench()),
+        len(view.hand),
+        False,
+    )
+    return dmg > 0 and dmg >= int(opp.get("hp") or 0)
+
+
 def _choose_main(view: View, opts) -> list[int]:
     n = len(opts)
     if n == 0:
         return []
     best_i, best_s = 0, -1e9
+    best_atk_i, best_atk_s = -1, -1e9
+    best_dev_i, best_dev_s = -1, -1e9
+    lethal = False
     for i, o in enumerate(opts):
         try:
             s = _score_main(view, o if isinstance(o, dict) else {})
@@ -1679,6 +1759,24 @@ def _choose_main(view: View, opts) -> list[int]:
             s = 0.0
         if s > best_s:
             best_s, best_i = s, i
+        if isinstance(o, dict) and o.get("type") == OPT_ATTACK:
+            if s > best_atk_s:
+                best_atk_s, best_atk_i = s, i
+            if _attack_is_lethal(view, o):
+                lethal = True
+        else:
+            if s > best_dev_s:
+                best_dev_s, best_dev_i = s, i
+    # MAIN is a sequential menu and ATTACK ends the turn.  Lethal attacks are
+    # taken immediately; otherwise exhaust positive development (PLAY /
+    # ABILITY / EVOLVE / ATTACH / useful RETREAT) before attacking.  END stays
+    # the last fallback when nothing positive is available.
+    if lethal and best_atk_i >= 0:
+        return [best_atk_i]
+    if best_dev_i >= 0 and best_dev_s > 0.0:
+        return [best_dev_i]
+    if best_atk_i >= 0:
+        return [best_atk_i]
     return [best_i]
 
 
