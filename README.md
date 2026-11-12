@@ -28,6 +28,7 @@ ladder games, and a reproducible submission builder.
 | h1 vs random / first / greedy | 95.0% / 99.0% / 96.0% |
 | search vs h1 (Lopunny, 600 games) | **61.3%** (57.4–65.2%) |
 | search vs h1 (Dragapult, 600 games) | **54.2%** (50.2–58.2%) |
+| final vs h1, BO3 matches (30) | **63.3%** |
 | final vs pre-iteration agent (200 games) | **90.0%** (85.1–93.4%) |
 | imitation baseline (BC) vs h1 | 40.0% — negative result |
 

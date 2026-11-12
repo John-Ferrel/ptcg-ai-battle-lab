@@ -157,6 +157,7 @@ overrides the heuristic when the search score wins by ≥200 points.
 | search vs greedy — Lopunny | 200 | 89.0% | 83.9–92.6% | 0 / 0 |
 | search vs greedy — Dragapult | 200 | 97.0% | 93.6–98.6% | 0 / 0 |
 | h1 vs greedy — Dragapult | 200 | 96.5% | 92.9–98.3% | 0 / 0 |
+| **search vs h1 — BO3 matches** | **30** | **63.3%** | 45.5–78.1% | 0 bad statuses |
 
 Ablations (from the search report):
 - ungated full search: 53.5% (override 43.8%) — no better than h1;
@@ -206,13 +207,17 @@ transferring to win rate.
 
 ## E6 — End-to-end iteration
 
-| Agent | Deck | vs final agent | Games | Final WR |
-|---|---|---|---:|---:|
-| pre-iteration `heuristic_v1` (pre-fix) | Dipplin | — | 200 | — |
-| **final `search_v1`** | **Dragapult #3** | **90.0%** (85.1–93.4%) | 200 | — |
+| Agent | Deck | Opponent | Games | Win rate | CI95 |
+|---|---|---|---:|---:|---|
+| **final `search_v1`** | **Dragapult #3** | pre-iteration h1 + Dipplin | 200 | **90.0%** | 85.1–93.4% |
+| **final `search_v1`** | **Dragapult #3** | meta-weighted greedy field | 400 | **91.5%** | 88.4–93.9% |
+| **final `search_v1`** | **Dragapult #3** | h1, **BO3 matches** | 30 | **63.3%** | 45.5–78.1% |
 
 The 90% is not "90% on the ladder" — it is the measured improvement over the
-first working version of this project under identical local conditions.
+first working version of this project under identical local conditions. The
+91.5% gauntlet uses the real meta composition (Excadrill 40, Dragapult 30,
+Lopunny 11, Kangaskhan 9, Dragapult #8 10) but local greedy pilots, so it is a
+sanity/ceiling check, not a ladder estimate.
 
 ## Anomalies / legality
 
@@ -222,8 +227,9 @@ first working version of this project under identical local conditions.
 - "Too many decisions" stalls (>6,000 decisions in one game) occur in mirror
   matches with tank/heal decks: Kangaskhan 3.3%, Dipplin 1.1%, Dragapult #8
   1.1%, Excadrill 0.7%, Lopunny 0.6%, Dragapult #3 0.5%. The final agent had 0
-  stalls in its 800 evaluated games. The harness attributes a stall to the
-  player who exceeded the cap (conservative: counted as a loss).
+  stalls in 800 self-play games and 2/400 (0.5%) in the gauntlet. The harness
+  attributes a stall to the player who exceeded the cap (conservative: counted
+  as a loss).
 
 ## Threats to validity
 
