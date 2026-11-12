@@ -25,10 +25,12 @@ Rebuild from the public source:
   --pack submissions/public_v3_lop.tar.gz
 ```
 
-**Status: upload blocked.** The API returns `403 ... accept its rules first`.
-Accept the competition rules on
-<https://www.kaggle.com/competitions/the-pokemon-company-ptcg-ai-battle-challenge-playground/rules>,
-then:
+**Status: submitted.** Ref 58273092 reached **1102.5** (hot streak); a
+reactivated run of the same artifact scored 692.5. The stable best is the
+Dragapult/Blaziken variant (ref 58273532, **966.5**, team rank 167/712). The
+ladder is noisy; see `docs/LADDER.md`.
+
+Original submission command:
 
 ```bash
 .venv/bin/kaggle competitions submit \

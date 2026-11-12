@@ -59,12 +59,15 @@ Details, ablations and caveats: `EXPERIMENTS.md`.
 
 | Ref | Agent | Status | Score observed |
 |---:|---|---|---:|
-| 58273092 | public v3 + Lopunny | COMPLETE | 687.6 (seeded 600; first public match won) |
-| 58273236 | from-scratch `search_v1` + Dragapult | PENDING | — |
+| 58273092 | public v3 + Lopunny (first run) | COMPLETE (inactive) | **1102.5** (hot streak) |
+| 58273532 | public v3 + Dragapult/Blaziken | COMPLETE | **966.5** (stable best; team rank 167/712) |
+| 58273729 | public v3 + Lopunny (reactivated) | COMPLETE | 692.5 |
+| 58273236 | from-scratch `search_v1` + Dragapult | COMPLETE | 180.3 |
 
-Scores are dynamic and not converged; see `docs/LADDER.md`. The first
-from-scratch submission (58273114) errored because the Kaggle loader does not
-define `__file__`; all agents now guard it.
+The ladder rating is noisy: the same Lopunny artifact scored 1102.5 and 692.5 on
+two runs. See `docs/LADDER.md`. The first from-scratch submission (58273114)
+errored because the Kaggle loader does not define `__file__`; all agents now
+guard it.
 
 ## What is here
 

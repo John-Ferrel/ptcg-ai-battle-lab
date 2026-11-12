@@ -122,17 +122,17 @@ Submit (after accepting the competition rules on the website):
   -m "public v3 PPO (Dipam, MIT) + current-meta Lopunny deck"
 ```
 
-## Submission status
+## Submission status (real ladder)
 
-Attempted on 2026-11-12. The API returned:
+Rules were accepted on 2026-11-12; submissions completed.
 
-```
-403 Client Error: Forbidden
-You don't have access to this resource.
-If this is a competition, you may need to accept its rules first at
-  https://www.kaggle.com/competitions/<competition>/rules
-```
+| Ref | Deck | Observed score | Note |
+|---:|---|---:|---|
+| 58273092 | Lopunny #5 | **1102.5** | first run, inactive; hot streak |
+| 58273729 | Lopunny #5 (reactivated) | 692.5 | same artifact, noisy |
+| 58273532 | Dragapult/Blaziken #8 | **966.5** | stable best; team rank 167/712 |
+| 58273236 | from-scratch search_v1 | 180.3 | real-ladder measurement of our own arm |
 
-The rules acceptance is a website action; the CLI/API token cannot do it.
-Once the rules are accepted, the tarball above is ready to upload. No
-leaderboard score is claimed until an actual submission completes.
+The ladder is noisy (community: same archive 723.8–977.3 over 13 submissions).
+See `docs/LADDER.md` for the full log. The team's best stable active submission
+is Dragapult/Blaziken at 966.5.
