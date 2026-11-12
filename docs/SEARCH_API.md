@@ -1,5 +1,21 @@
 # Search API — recovered binding (`cg.api`)
 
+## Confirmed against the official SDK (2026-11-12)
+
+The public PPO v3 notebook output ships the competition's official `cg/api.py`.
+Its `search_begin` uses exactly the prototypes recovered here:
+
+```python
+agent_ptr = lib.AgentStart()
+lib.SearchBegin(agent_ptr, sbi.encode("ascii"), len(sbi), ...)
+lib.SearchStep(agent_ptr, search_id, picks, len(picks))
+```
+
+So the binding is no longer a reverse-engineering guess: it matches the official
+wrapper. Our `vendor/cg/api.py` is kept because it is our own code and works with
+the pip-installed engine; the official file is competition data and is not
+committed.
+
 Status: **works**.  The forward-search symbols exported by the `cabt` engine
 shipped with `kaggle-environments==1.33.3` are bound in `vendor/cg/api.py`.
 The binding was recovered from the compiled library and verified with
