@@ -6,9 +6,10 @@ presented as final or converged.
 
 | Ref | Artifact | Status | Official score (observed) | Notes |
 |---:|---|---|---:|---|
-| 58273092 | `public_v3_lop.tar.gz` — public PPO v3 (Dipam, MIT) + Mega Lopunny #5 | COMPLETE | **687.6** at 12:47 UTC | Started at 600.0; first public episode won vs `(ノ◡ <)` (Q-learning baseline). Score will move as more matches complete. |
+| 58273092 | `public_v3_lop.tar.gz` — public PPO v3 (Dipam, MIT) + Mega Lopunny #5 | COMPLETE | **879.5** at 12:56 UTC | 600.0 → 687.6 → 879.5 over three public episodes. Still not converged. |
 | 58273114 | `search_v1_full.tar.gz` — from-scratch search_v1 + Dragapult | ERROR | — | `NameError: name '__file__' is not defined` from the Kaggle loader; see below. |
-| 58273236 | `search_v1_full_v2.tar.gz` — same, fixed loader guard | PENDING (validation) | — | Resubmitted after the fix. |
+| 58273236 | `search_v1_full_v2.tar.gz` — same, fixed loader guard | COMPLETE | **491.1** at 12:56 UTC | Real-ladder measurement of the from-scratch arm; it lost more than it won. |
+| 58273532 | `public_v3_pult8.tar.gz` — public v3 + Dragapult/Blaziken #8 | PENDING | — | Field-weighted best deck vs the 2026-11-09 meta; submitted after the Lopunny result. |
 
 ## The `__file__` loader bug
 
@@ -59,3 +60,32 @@ kaggle competitions submissions -c the-pokemon-company-ptcg-ai-battle-challenge-
 kaggle competitions episodes <submission_id>
 kaggle competitions replay <episode_id> -p /tmp/ep
 ```
+
+## Observed trajectory (12:40–12:56 UTC)
+
+| Time | v3+Lopunny | search_v1 (from scratch) |
+|---|---:|---:|
+| 12:47 | 687.6 | — |
+| 12:56 | **879.5** | **491.1** |
+
+The public PPO base is ~390 rating points above the from-scratch search agent
+after the first few matches. The v3+Lopunny score was still rising when the
+third candidate (v3 + Dragapult/Blaziken) was submitted; only the latest two
+submissions are active, so v3+Lopunny may become inactive until resubmitted.
+
+## Why the third candidate is Dragapult/Blaziken, not Lopunny
+
+Real 2026-11-09 match-level matrix (1,694 matches, proper archetype labels):
+
+| Deck | Field-weighted WR | Key matchup |
+|---|---:|---|
+| **Dragapult / Blaziken** | **51.3%** | beats Excadrill **68.3%** (189 games) |
+| Mega Lopunny / Froslass | 48.6% | loses to Excadrill **34.8%** (132 games) |
+| Mega Excadrill / Genesect | 48.3% | 39.5% of the field |
+| Dragapult / Drakloak | 39.4% | loses to Excadrill 36.8% |
+
+Lopunny looked best in same-model self-play (63.4% round-robin), but the real
+field is Excadrill-heavy and Lopunny is its prey. Dragapult/Blaziken is the
+counter to the most common archetype, and under the v3 model it is even with
+Lopunny (49.2%, 120 games) and slightly ahead of Dragapult/Drakloak (51.7%,
+120 games). That is why it is the third submission.

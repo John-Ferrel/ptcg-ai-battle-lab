@@ -268,12 +268,13 @@ a website action; no leaderboard score can be claimed until it is done.
 
 | Ref | Agent | Status | Official score (observed) |
 |---:|---|---|---:|
-| 58273092 | public v3 (Dipam, MIT) + Mega Lopunny #5 | COMPLETE | 687.6 at 12:47 UTC |
+| 58273092 | public v3 (Dipam, MIT) + Mega Lopunny #5 | COMPLETE | 879.5 at 12:56 UTC |
 | 58273114 | from-scratch `search_v1` + Dragapult | ERROR | — (`__file__` loader bug) |
-| 58273236 | same, fixed loader guard | PENDING | — |
+| 58273236 | same, fixed loader guard | COMPLETE | **491.1** |
+| 58273532 | public v3 + Dragapult/Blaziken #8 | PENDING | — |
 
-The 687.6 is a **seeded** score (600) after the first public episode (a win vs
-the Q-learning baseline `(ノ◡ <)`), not a converged rating. The competition's
+The scores are **seeded** (600) and still moving: v3+Lopunny 600 → 687.6 → 879.5
+over three public episodes; the from-scratch search agent fell to 491.1. The competition's
 public score is Elo-like and only the latest two submissions are active. See
 `docs/LADDER.md` for the submission log and the loader bug.
 
