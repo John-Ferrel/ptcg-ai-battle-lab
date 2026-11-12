@@ -182,3 +182,36 @@ So the answer depends on the band:
 This is also why a **portfolio of two active submissions** (one robust deck +
 one counter deck) is a reasonable hedge in a non-transitive meta: you are
 playing a mixed strategy with two pure components.
+
+## 9. 2026-11-11 update: climb path and pilot-conditional counter
+
+The parsed ladder dataset (79k matches, CC0) gives a cleaner picture than the
+single-day raw replays.
+
+**Latest shares (11-11):** Excadrill 34.0% (WR 45.6%), Dragapult/Blaziken 26.3%
+(55.2%), Lopunny 12.8% (53.3%), Dragapult/Drakloak 11.5% (51.5%),
+Kangaskhan/Latias 2.8% (**59.1%**), Kangaskhan/Ogerpon 5.3% (56.2%).
+
+**Climb path (the practical answer to "can't submit per band"):**
+
+| Band | Best climber | pult8 WR | Lopunny WR |
+|---|---|---:|---:|
+| 1000–1200 | **pult8 (71.4%, field-WR 0.704)** | 71.4% | 58.1% |
+| 1200–1400 | Kangaskhan/Latias (59.1%, field-WR 0.598) | 52.7% | 54.7% |
+| 1400+ | Kangaskhan/Ogerpon (59.8%, field-WR 0.573) | 49.2% | 46.7% |
+
+Dragapult/Blaziken is the best **climber**: it dominates the Excadrill-heavy
+1000–1200 band and stays competitive at the top. The theoretical top-band
+counters are not executable by our v3 pilot:
+
+- Kangaskhan/Latias vs v3+pult8: **43.8%** (19 stalls, avg 274 turns)
+- Kangaskhan/Latias vs v3+Lopunny: **31.7%** (8 stalls)
+- pult8_top / pult8_88b26e / Drakloak top vs pult8_08: 48.1% / 48.3% / 48.3%
+- Excadrill top vs pult8_08: 30.0%
+- go-second vs go-first: 43.8% (go-first is correct)
+- temp=1.0 vs temp=0: 48.3% over 420 games (keep argmax)
+
+So the climb path, not the equilibrium, decides the core: pult8 is the deck that
+gets you through the bands where Excadrill is 54% of the field, and it is still
+~49% at 1400+. The top-band specialist is a paper counter until a pilot can
+execute it.

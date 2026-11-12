@@ -116,3 +116,25 @@ We checked the newer public bundles:
 - `decks/latest/` — exact 11-11 top lists (pult8_top, pult8_08, Lopunny,
   Kangaskhan/Latias, Kangaskhan/Ogerpon, Drakloak, Excadrill).
 - Raw joint results in `results/` (git-ignored).
+
+## 8. Temperature ablation
+
+`SearchAgent` supports a real-play temperature; the public bundle uses
+`temp=0.0` (argmax). Same pult8 deck:
+
+| Variant | Games | WR vs temp=0 |
+|---|---:|---:|
+| temp=0.5 | 120 | 41.7% |
+| temp=1.0 | 120 | 53.3% |
+| temp=1.0 (confirmation) | 300 | 46.3% |
+| **temp=1.0 pooled** | **420** | **48.3%** |
+
+No gain; keep `temp=0.0`. The 120-game 53.3% was noise — a good example of why
+single 100-game A/Bs are not enough.
+
+## 9. Final recommendation
+
+Keep the active pair as **pult8_08 (core, 987.5)** + **Lopunny_05 (hedge,
+823.2)**. Do not spend the last daily submission on a candidate that is only
+equal in self-play. The next real lever is a stronger policy (new checkpoint or
+fine-tuning), not another deck from the same checkpoint.
