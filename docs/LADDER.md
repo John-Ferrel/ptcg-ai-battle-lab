@@ -69,6 +69,11 @@ kaggle competitions replay <episode_id> -p /tmp/ep
 | 12:47 | 687.6 | — |
 | 12:56 | **879.5** | **491.1** |
 | 13:04 | **1102.5** (inactive) | **336.9** |
+| 13:15 | 1102.5 (inactive) | **180.3** |
+
+Other active candidate: v3 + Dragapult/Blaziken **966.5** at 13:15. Reactivated
+Lopunny run was **749.8** and climbing. Team leaderboard: **rank 167 / 712,
+score 966.5** (the best active submission at that moment).
 
 The public PPO base is ~390 rating points above the from-scratch search agent
 after the first few matches. The v3+Lopunny score was still rising when the
@@ -114,3 +119,16 @@ One submission remains for the day.
 
 The score climbed on wins; it has not yet been stress-tested against a long run
 of top-field opponents. Treat 1102.5 as a promising, not converged, rating.
+
+## Current active pair (13:15 UTC)
+
+| Ref | Candidate | Observed score |
+|---:|---|---:|
+| 58273532 | v3 + Dragapult/Blaziken #8 | **966.5** |
+| 58273729 | v3 + Lopunny (reactivated) | 749.8 (climbing) |
+| 58273092 | v3 + Lopunny (first run, inactive) | 1102.5 |
+| 58273236 | from-scratch search_v1 (inactive) | 180.3 |
+
+Team leaderboard row: rank **167/712**, score **966.5** at 13:15 UTC. The
+reactivated Lopunny is expected to keep climbing toward the first run's 1102.5;
+if it does, the team score will rise without another submission.

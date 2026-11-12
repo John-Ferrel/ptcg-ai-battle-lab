@@ -271,8 +271,9 @@ a website action; no leaderboard score can be claimed until it is done.
 | 58273092 | public v3 (Dipam, MIT) + Mega Lopunny #5 | COMPLETE (inactive) | **1102.5** at 13:04 UTC |
 | 58273114 | from-scratch `search_v1` + Dragapult | ERROR | — (`__file__` loader bug) |
 | 58273236 | same, fixed loader guard | COMPLETE | **491.1** |
-| 58273532 | public v3 + Dragapult/Blaziken #8 | COMPLETE | 600.0 (seeded) |
-| 58273729 | public v3 + Lopunny (reactivated) | PENDING | — |
+| 58273532 | public v3 + Dragapult/Blaziken #8 | COMPLETE | **966.5** |
+| 58273092 | v3 + Lopunny (first run, inactive) | COMPLETE | **1102.5** |
+| 58273729 | public v3 + Lopunny (reactivated) | COMPLETE | 749.8 (climbing) |
 
 The scores are **seeded** (600) and still moving: v3+Lopunny 600 → 687.6 → 879.5
 over three public episodes; the from-scratch search agent fell to 491.1. The competition's
