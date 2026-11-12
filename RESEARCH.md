@@ -183,8 +183,8 @@ Consequences for the project:
    a belief over those; the engine's `search_begin` accepts one explicitly.
 2. **Stochasticity** — shuffles, coin flips, prize placement; no seed control
    locally. Evaluation must be statistical.
-3. **Large, combinatorial action space** — up to 27 legal options in one MAIN
-   menu in our sample, plus sub-decisions (targets, counts, ordering).
+3. **Large, combinatorial action space** — up to 39 legal options in one MAIN
+   menu in the real replays, plus sub-decisions (targets, counts, ordering).
 4. **Hard failure mode** — one illegal index, exception or timeout loses the
    game. Every policy must clamp to the offered options.
 5. **Compute budget** — 600 s overage per player per match. A ~1 ms heuristic is
