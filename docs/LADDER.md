@@ -6,10 +6,11 @@ presented as final or converged.
 
 | Ref | Artifact | Status | Official score (observed) | Notes |
 |---:|---|---|---:|---|
-| 58273092 | `public_v3_lop.tar.gz` — public PPO v3 (Dipam, MIT) + Mega Lopunny #5 | COMPLETE | **879.5** at 12:56 UTC | 600.0 → 687.6 → 879.5 over three public episodes. Still not converged. |
+| 58273092 | `public_v3_lop.tar.gz` — public PPO v3 (Dipam, MIT) + Mega Lopunny #5 | COMPLETE (inactive) | **1102.5** at 13:04 UTC | 600 → 687.6 → 879.5 → 1102.5 over five public episodes, all wins observed. Became inactive when the third candidate was submitted. |
 | 58273114 | `search_v1_full.tar.gz` — from-scratch search_v1 + Dragapult | ERROR | — | `NameError: name '__file__' is not defined` from the Kaggle loader; see below. |
 | 58273236 | `search_v1_full_v2.tar.gz` — same, fixed loader guard | COMPLETE | **491.1** at 12:56 UTC | Real-ladder measurement of the from-scratch arm; it lost more than it won. |
-| 58273532 | `public_v3_pult8.tar.gz` — public v3 + Dragapult/Blaziken #8 | PENDING | — | Field-weighted best deck vs the 2026-11-09 meta; submitted after the Lopunny result. |
+| 58273532 | `public_v3_pult8.tar.gz` — public v3 + Dragapult/Blaziken #8 | COMPLETE | 600.0 (seeded; first public match pending) | Field-weighted best deck vs the 2026-11-09 meta. |
+| 58273729 | `public_v3_lop.tar.gz` — Lopunny, resubmitted | PENDING | — | Reactivation: the first Lopunny run reached **1102.5**, but became inactive when the third candidate was submitted (only latest 2 active). |
 
 ## The `__file__` loader bug
 
@@ -67,6 +68,7 @@ kaggle competitions replay <episode_id> -p /tmp/ep
 |---|---:|---:|
 | 12:47 | 687.6 | — |
 | 12:56 | **879.5** | **491.1** |
+| 13:04 | **1102.5** (inactive) | **336.9** |
 
 The public PPO base is ~390 rating points above the from-scratch search agent
 after the first few matches. The v3+Lopunny score was still rising when the
@@ -89,3 +91,26 @@ field is Excadrill-heavy and Lopunny is its prey. Dragapult/Blaziken is the
 counter to the most common archetype, and under the v3 model it is even with
 Lopunny (49.2%, 120 games) and slightly ahead of Dragapult/Drakloak (51.7%,
 120 games). That is why it is the third submission.
+
+## Reactivation (13:06 UTC)
+
+Only the latest two submissions are active, so submitting the third candidate
+(Dragapult/Blaziken) made the 1102.5 Lopunny run inactive. It was resubmitted as
+**58273729** to put a strong agent back into the active pair. It restarts at the
+600 seed and must re-converge; the previous run shows the same artifact can reach
+1102.5.
+
+Current active pair: **58273532** (v3 + Dragapult/Blaziken) and **58273729**
+(v3 + Lopunny, reactivated). The from-scratch `search_v1` (336.9) is inactive.
+One submission remains for the day.
+
+## Observed match record (v3+Lopunny, first run)
+
+| Episode | Opponent | Result |
+|---|---|---|
+| 126599010 | `(ノ◡ <)` (Q-learning baseline) | win |
+| 126599226 | Antonio Cordeiro #2 | win |
+| 126599437 | teppei | win |
+
+The score climbed on wins; it has not yet been stress-tested against a long run
+of top-field opponents. Treat 1102.5 as a promising, not converged, rating.
