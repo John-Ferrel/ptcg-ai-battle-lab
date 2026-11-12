@@ -42,6 +42,7 @@ class GameResult:
     max_decision_ms: float = 0.0
     illegal: bool = False
     error: str = ""
+    error_player: int = -1
     seats: tuple[str, str] = ("", "")
     deck_ids: tuple[list[int], list[int]] = field(default_factory=lambda: ([], []))
     trace: list[Decision] = field(default_factory=list)
@@ -91,6 +92,7 @@ def play_game(
     obs, start = battle_start(list(deck0), list(deck1))
     if obs is None or getattr(start, "errorPlayer", -1) >= 0:
         res.error = f"battle_start failed: errorPlayer={getattr(start, 'errorPlayer', '?')}"
+        res.error_player = int(getattr(start, "errorPlayer", -1))
         res.winner = 1 if getattr(start, "errorPlayer", 0) == 0 else 0
         res.illegal = True
         return res
@@ -114,6 +116,7 @@ def play_game(
             n_dec += 1
             if n_dec > MAX_DECISIONS:
                 res.error = "too many decisions"
+                res.error_player = who
                 res.winner = 1 - who
                 break
             t0 = time.perf_counter()
@@ -121,6 +124,7 @@ def play_game(
                 action = agents[who](obs)
             except Exception as exc:  # noqa: BLE001
                 res.error = f"agent {who} raised {type(exc).__name__}: {exc}"
+                res.error_player = who
                 res.winner = 1 - who
                 res.illegal = True
                 break
@@ -131,6 +135,7 @@ def play_game(
             action, why = _validate(action, sel)
             if action is None:
                 res.error = f"agent {who} illegal: {why}"
+                res.error_player = who
                 res.winner = 1 - who
                 res.illegal = True
                 break
@@ -138,6 +143,7 @@ def play_game(
                 res.trace.append(Decision(who, int(sel.get("context", -1)), int(sel.get("type", -1)), len(sel.get("option") or []), action, ms))
             if spent[who] > decision_budget_s:
                 res.error = f"agent {who} exceeded {decision_budget_s:.0f}s of thinking time"
+                res.error_player = who
                 res.winner = 1 - who
                 break
             obs = battle_select(action)

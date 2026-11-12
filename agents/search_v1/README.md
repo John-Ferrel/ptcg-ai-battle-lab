@@ -11,8 +11,12 @@ results.
 | `main.py` | Kaggle entry point (`agent(obs)`); search + fallback |
 | `base_policy.py` | verbatim copy of `agents/heuristic_v1/main.py` |
 | `card_meta.json` | card metadata used by the base policy |
-| `deck.csv` | current deck (`05_Mega_Lopunny_ex.csv`) |
+| `deck.csv` | final deck (`03_Dragapult_ex.csv`); Lopunny was the tuning deck |
 | `meta/*.csv` | opponent-deck priors (Excadrill, Dragapult, Lopunny) |
+
+The final configuration uses the Dragapult #3 list (chosen after the policy
+fix: it is the best mirror deck under the fixed pilot). Lopunny #5 was used for
+the original search tuning/evaluation and is still an available variant.
 
 The agent is self-contained except for the official `cg.api`.  **Do not copy
 `vendor/cg` into this directory**; the Kaggle sandbox provides the SDK.  For

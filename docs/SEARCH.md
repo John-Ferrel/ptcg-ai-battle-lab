@@ -98,7 +98,8 @@ One belief per search by default (`SEARCH_V1_BELIEFS=1`).
   in `agents/search_v1/meta/`:
   * `01_Mega_Excadrill_ex.csv`
   * `03_Dragapult_ex.csv`
-  * `05_Mega_Lopunny_ex.csv`
+  * `05_Mega_Lopunny_ex.csv` (tuning deck; the shipped deck is
+    `03_Dragapult_ex.csv`, see "Deck choice" below)
 
   The prior is chosen by overlap with **revealed** opponent cards, weighting
   cards that appear in only one prior much more than shared staples.  This
@@ -284,7 +285,7 @@ agents/search_v1/
 ├── main.py          # search agent (this document's design)
 ├── base_policy.py   # verbatim copy of agents/heuristic_v1/main.py
 ├── card_meta.json   # card metadata for base_policy
-├── deck.csv         # 05_Mega_Lopunny_ex.csv
+├── deck.csv         # 03_Dragapult_ex.csv
 └── meta/
     ├── 01_Mega_Excadrill_ex.csv
     ├── 03_Dragapult_ex.csv

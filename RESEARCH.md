@@ -38,20 +38,29 @@ Observation
 └── search_begin_input: str        # opaque blob required by the search API
 ```
 
-Key `SelectContext` values observed in real games (6 random games, 406 decisions):
+Key `SelectContext` values in real games (clean pairing, 40 replays, 16,949
+decisions — only the ACTIVE player's fresh observation is paired; the inactive
+player keeps a stale select that must be skipped):
 
 | context | meaning | share |
 |---|---|---|
-| 0 MAIN | main action menu | 66% |
-| 7 EVOLVE | evolution target choice | 13% |
-| 3 SWITCH | pick bench Pokémon to switch in | 4% |
-| 30 DISCARD_ENERGY | pick attached energy to discard | 4% |
-| 1 SETUP_ACTIVE | opening active | 3% |
-| 8 DISCARD | discard a card | 2% |
-| 22 ATTACH_TO | choose attach target | 2% |
-| 4 TO_ACTIVE | promote after KO | 2% |
-| 41 IS_FIRST | go first / second | 1.5% |
-| 2 SETUP_BENCH | opening bench | 1% |
+| 0 MAIN | main action menu | 51.3% |
+| 7 EVOLVE / deck search | evolution prompt or pick from a revealed deck | 16.1% |
+| 14 DAMAGE_COUNTER_ANY | free damage-counter placement | 6.7% |
+| 21 ATTACH_FROM | choose the energy/card to attach | 4.4% |
+| 22 ATTACH_TO | choose the attach target | 3.5% |
+| 3 SWITCH | pick a benched Pokémon | 2.9% |
+| 8 DISCARD | discard a card | 2.3% |
+| 4 TO_ACTIVE | promote after a KO | 2.3% |
+| 30 DISCARD_ENERGY | pick attached energy to discard | 2.0% |
+| 5 TO_BENCH | put a Pokémon on the bench | 2.0% |
+| 1 SETUP_ACTIVE | opening active | 1.1% |
+
+That is ~424 decisions per game. In a random-vs-random sample the mix was more
+MAIN-heavy (66%); real pilots reach the evolution/search and damage-placement
+sub-games far more often. Context 7 matters: its options can be
+`{"area": 1, "index": k}` where `index` addresses `select.deck` (the revealed
+remaining deck), i.e. a **search choice**, not a normal evolution.
 
 `MAIN` options use `OptionType`: `PLAY(7)`, `ATTACH(8)`, `EVOLVE(9)`,
 `ABILITY(10)`, `DISCARD(11)`, `RETREAT(12)`, `ATTACK(13)`, `END(14)`.
@@ -92,8 +101,26 @@ search_end() / search_release(searchId)
 It determinizes hidden information (our deck/prizes, opponent deck/prizes/hand)
 and supports **branching from the same node**, i.e. a genuine search tree, not a
 linear replay. The Python wrapper is not shipped in the pip package, but the
-symbols (`SearchBegin`, `SearchStep`, `SearchEnd`, `SearchRelease`) are exported
-by `libcg.so`. Binding them is an active work item (see EXPERIMENTS.md).
+symbols are exported by `libcg.so`; we recovered the native prototypes and bound
+them in `vendor/cg` (see `docs/SEARCH_API.md`):
+
+```c
+void *AgentStart(void);                       // search-mode engine object
+char *SearchBegin(void *agent, const char *input, int input_len,
+                  const int *your_deck, const int *your_prize,
+                  const int *opponent_deck, const int *opponent_prize,
+                  const int *opponent_hand, const int *opponent_active,
+                  int manual_coin);
+char *SearchStep(void *agent, int search_id, const int *picks, int pick_count);
+void  SearchEnd(void *agent);
+void  SearchRelease(void *agent, int search_id);
+```
+
+**Measured:** a root costs 0.3–0.5 ms; throughput is 3.4k–5.7k search nodes/s
+(25–500 full random rollouts/s depending on position length); branching is
+verified independent. This is enough for ~50–200 rollouts per decision inside
+the 600 s budget. The final agent uses a small search (top-4 candidates,
+2 rollouts × 8 steps) with a confidence gate.
 
 ## 3. Prior art (only sources with code / measured results)
 
@@ -105,6 +132,50 @@ by `libcg.so`. Binding them is an active work item (see EXPERIMENTS.md).
 | `hotorch/ptcg-ai-battle-strategy` | many search candidates | Determinized search / value tables / opponent reply tables | Search is feasible within the time budget but engineering-heavy. |
 | `yijieyuan/kaggle-pokemon-tcg` | 1st place (strategy track) | Write-ups/deck tables only, code withheld | No code to reuse. |
 | `SiamRahman29/pokemon-tcg-agent` | large public agent zoo | Deck library + rule-based agents + BC experiments | Useful deck lists and card-data patterns. |
+
+## 3a. Real playground meta (measured, not guessed)
+
+Kaggle publishes daily replay datasets for the playground. We downloaded
+`kaggle/the-pokemon-company-ptcg-ai-battle-challenge-playground-episodes-2026-11-09`
+(1,694 games, BO3, engine v2) through `kagglehub` (public, no credentials) and
+parsed every game's deck lists and winners (`scripts/analyze_episodes.py`,
+results in `results/meta_1109/`).
+
+**Archetype share / win rate over 1,694 games:**
+
+| Archetype | Share | Win rate |
+|---|---:|---:|
+| Mega Excadrill ex | 39.5% | 50.7% |
+| Dragapult ex | 30.2% | 50.3% |
+| Mega Lopunny ex | 10.5% | **56.0%** |
+| Mega Kangaskhan ex | 9.0% | 50.7% |
+| Bloodmoon Ursaluna ex | 7.8% | 38.4% |
+| Fezandipiti ex | 2.7% | 47.8% |
+
+Restricted to games where **both** players are rated ≥1200 (`min_score`):
+
+| Archetype | Games | Win rate |
+|---|---:|---:|
+| Dragapult ex | 806 | 51.7% |
+| Mega Excadrill ex | 828 | 45.0% |
+| Mega Lopunny ex | 241 | 56.0% |
+| Mega Kangaskhan ex | 210 | **59.5%** |
+| Bloodmoon Ursaluna ex | 75 | 38.7% |
+
+At ≥1400 only Dragapult (46.3%), Mega Kangaskhan (58.2%) and Mega Lopunny
+(64.3%, n=14) survive. The old main-competition archetypes (Alakazam, Dipplin,
+Lucario, Ogerpon) are **absent** from the playground pool.
+
+Consequences for the project:
+
+1. Deck choice must move to the new meta. The top 12 exact lists extracted from
+   replays are in `decks/meta/`, and the deck tournament uses them as its
+   primary pool.
+2. These win rates are confounded by pilot skill (the lists were piloted by
+   their owners) and by Elo matchmaking, so they are a prior, not a verdict.
+3. The replays contain ~433k clean single-pick (state → action) pairs from the
+   real field (plus multi-pick decisions), which enables imitation learning and
+   policy-divergence mining without any extra simulation.
 
 ## 4. Technical challenges
 
@@ -130,14 +201,15 @@ by `libcg.so`. Binding them is an active work item (see EXPERIMENTS.md).
 |---|---|---|---|---|
 | Random / first legal | trivial | floor | ~0 | use as sanity opponents only |
 | Rule-based heuristic | high (card DB available, fast) | solid baseline; top rule-based agents reached high ladder in the main competition | low | **v1 baseline** |
-| Determinized search (`search_begin`) | medium (bindings must be reverse-engineered) | strongest local lever if it works | medium | **v2 improvement** |
+| Determinized search (`search_begin`) | **verified** (native bindings recovered, 3.4k–5.7k nodes/s) | +4 pts on a strong base, +13 pts on a weak base | medium | **v2 improvement (shipped)** |
 | MCTS | low-medium (needs many rollouts; rollout cost + determinization quality) | unclear vs shallow search | high | only if search throughput is good |
-| Self-play RL / BC | low (no replay dataset for the new pool; no GPU budget assumed) | potentially high but data-hungry | very high | out of scope for this iteration |
+| Self-play RL / BC | replay dataset exists (1,694 games, 433k single-pick decisions); no GPU assumed | offline agreement 46.4%, but **40% online vs the heuristic** | high | tested as `bc_linear`; negative result |
 
-**Chosen v1 route:** a legality-safe, card-DB-aware rule-based policy, plus a
-separate deck tournament to pick the list. Then use the engine's forward search
-to upgrade action selection (v2), and measure both against the same opponent
-pool with seat-swapped games.
+**Chosen route (executed):** a legality-safe, card-DB-aware rule-based policy,
+plus a separate deck tournament over real-meta lists. Then the engine's forward
+search upgrades action selection (search_v1), and a linear imitation policy
+(bc_linear) is tested as a different algorithm. All arms are measured against
+the same opponent pool with seat-swapped games. Results: `EXPERIMENTS.md`.
 
 ## 6. Evaluation protocol (fixed before experiments)
 

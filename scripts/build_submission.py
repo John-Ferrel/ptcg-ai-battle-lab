@@ -27,13 +27,17 @@ ALLOWED_EXTRA = ("card_meta.json", "cards.json")
 
 
 def extra_files(agent_dir: Path) -> list[Path]:
-    """Bundle helper modules and data that live next to main.py."""
+    """Bundle helper modules and data (including subdirs such as meta/)."""
     out = []
-    for p in sorted(agent_dir.iterdir()):
-        if not p.is_file() or p.name in ("main.py", "deck.csv") or p.name.startswith("."):
+    for p in sorted(agent_dir.rglob("*")):
+        if not p.is_file() or "__pycache__" in p.parts:
             continue
-        if p.suffix in (".py", ".json"):
-            out.append(p)
+        rel = p.relative_to(agent_dir)
+        if len(rel.parts) == 1 and p.name in ("main.py", "deck.csv"):
+            continue
+        if p.name.startswith(".") or p.suffix not in (".py", ".json", ".csv"):
+            continue
+        out.append(p)
     return out
 
 
@@ -53,7 +57,8 @@ def build(agent_dir: Path, out: Path) -> list[str]:
     out.parent.mkdir(parents=True, exist_ok=True)
     with tarfile.open(out, "w:gz", format=tarfile.GNU_FORMAT) as tf:
         for p in files:
-            info = tf.gettarinfo(str(p), arcname=p.name)
+            arcname = p.name if p.parent == agent_dir else p.relative_to(agent_dir).as_posix()
+            info = tf.gettarinfo(str(p), arcname=arcname)
             info.uid = info.gid = 0
             info.uname = info.gname = ""
             info.mtime = 0

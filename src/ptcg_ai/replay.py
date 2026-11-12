@@ -29,19 +29,23 @@ def decisions(ep: dict) -> list[dict]:
         step = steps[t]
         for p in (0, 1):
             try:
+                # Only the ACTIVE player's observation is fresh; the inactive
+                # player keeps a stale select from an earlier step (the engine
+                # only rewrites the active player's observation slot).
+                if step[p].get("status") != "ACTIVE":
+                    continue
                 obs = step[p]["observation"]
                 sel = obs.get("select")
                 if not sel:
                     continue
                 if (obs.get("current") or {}).get("yourIndex") != p:
                     continue
-                # next step must be this player's answer
                 nxt = steps[t + 1][p]
-                if nxt.get("status") not in ("ACTIVE", "INACTIVE"):
-                    continue
                 act = nxt.get("action")
                 if not isinstance(act, list):
                     continue
+                if not act and int(sel.get("minCount") or 0) > 0:
+                    continue  # unanswered / truncated at the end of the log
                 out.append(
                     {
                         "obs": obs,

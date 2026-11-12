@@ -53,3 +53,24 @@ cd ptcg-ai-battle
 - `deck.csv` may contain basic energy more than 4×; all other cards max 4×.
 - Playground pool: 1,431 cards, 1,755 attacks. Old competition lists (1,267
   cards) are still legal.
+
+## Replay pairing (corrected)
+
+The engine only refreshes the **ACTIVE player's** observation slot. The inactive
+player keeps a stale `select` from an earlier step and its `action` is `[]`.
+`src/ptcg_ai/replay.py` therefore requires:
+
+- `steps[t][p]["status"] == "ACTIVE"`,
+- a non-empty action at `t+1` unless `minCount == 0`.
+
+Without this filter ~50% of "decisions" are stale duplicates. Clean rate is
+~424 decisions/game (16,949 decisions over 40 replays). The off-by-one is real:
+the action at `t+1` is legal for the select at `t` in 100% of non-empty cases.
+
+## Current status (final)
+
+- Final agent: `agents/search_v1` + `decks/meta/03_Dragapult_ex.csv`.
+- Submission: `scripts/build_submission.py --agent agents/search_v1` then
+  `scripts/kaggle_smoke.py` with `PYTHONPATH=vendor`.
+- Results and caveats: `EXPERIMENTS.md`. Search API: `docs/SEARCH.md`.
+- No Kaggle credentials in this environment → no official score.
