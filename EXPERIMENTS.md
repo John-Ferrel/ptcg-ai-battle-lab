@@ -29,7 +29,8 @@
 | Improved | `search_v1` | Lopunny | **61.3%** vs h1 over 600 games (57.4–65.2%) |
 | Improved | `search_v1` | Dragapult | **54.2%** vs h1 over 600 games (50.2–58.2%) |
 | Alternative | `bc_linear` | Dragapult | 46.4% offline top-1, but only **40.0%** vs h1 online — negative result |
-| Final | `search_v1` | Dragapult | **90.0%** vs the pre-iteration agent (200 games) |
+| Final (from scratch) | `search_v1` | Dragapult | **90.0%** vs the pre-iteration agent (200 games) |
+| **Public PPO** | **`public_v3`** | **Lopunny #5** | **81.9%** vs the same model on Alakazam; 90–100% vs all our agents |
 
 ---
 
@@ -218,6 +219,50 @@ first working version of this project under identical local conditions. The
 91.5% gauntlet uses the real meta composition (Excadrill 40, Dragapult 30,
 Lopunny 11, Kangaskhan 9, Dragapult #8 10) but local greedy pilots, so it is a
 sanity/ceiling check, not a ladder estimate.
+
+## E6b — Public PPO baseline (the pivot)
+
+After the first complete iteration we mined the public notebooks and the daily
+replay exports. The strongest public agents are all one family: Dipam
+Chakraborty's PPO token-transformer, re-packaged with new-card rows and BO3
+fixes (public scores 854–1074; top of the leaderboard is ~1596). We downloaded
+the notebook output (`busyaprime/lb-1074...`, 20.3 MB) and benchmarked it.
+
+| Matchup | Games | Win rate (public v3) | CI95 |
+|---|---:|---:|---|
+| v3 (Alakazam) vs `heuristic_v1` (Dragapult) | 40 | **90.0%** | 77.0–96.0% |
+| v3 (Alakazam) vs `search_v1` (Dragapult) | 40 | **100%** | 91.2–100% |
+| v3+Lopunny vs v3+Alakazam | 160 | **81.9%** | — |
+| v3+Lopunny vs v3+Dragapult | 160 | 48.1% | — |
+| v3+Lopunny vs v3+Excadrill | 160 | 49.4% | — |
+
+Same-model deck round-robin (80 games/pair):
+
+| Deck | Overall WR | CI95 |
+|---|---:|---|
+| Mega Lopunny #5 | **63.4%** | 58.2–68.7% |
+| Dragapult #3 | 58.4% | 53.0–63.8% |
+| Alakazam (bundle list) | 53.4% | 48.0–58.9% |
+| Mega Excadrill #1 | 45.6% | 40.2–51.1% |
+| Mega Kangaskhan #2 | 29.1% | 24.1–34.0% |
+
+0 illegal actions / 0 exceptions; 5–11 ms mean, ~105 ms max per decision.
+
+Interpretation: the gap between the public PPO and our from-scratch agents is
+~90–100% win rate, i.e. far larger than any tuning we had left in the heuristic.
+The correct engineering decision is to **use the mature public baseline** (MIT,
+credited) and spend our effort on the deck, turn order and search, not on
+re-inventing a policy. The public bundle already forces go-first, which matches
+the community measurement (+18–23 points in many matchups).
+
+The 2026-11-09 meta also explains the deck result: Alakazam is 1.9% of seats and
+~45% WR, while Mega Lopunny is 10.5% of seats at **56.0%** WR. The public bundle
+ships an Alakazam list from October; re-decking the same model to Lopunny is the
+cheapest large gain (81.9% in same-model self-play).
+
+**Submission status:** the tarball `submissions/public_v3_lop.tar.gz` is ready,
+but the Kaggle API returns `403 ... accept its rules first`. Rules acceptance is
+a website action; no leaderboard score can be claimed until it is done.
 
 ## Anomalies / legality
 

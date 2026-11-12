@@ -177,6 +177,41 @@ Consequences for the project:
    real field (plus multi-pick decisions), which enables imitation learning and
    policy-divergence mining without any extra simulation.
 
+## 3b. Community reconnaissance (2026-11-12, with Kaggle credentials)
+
+Once the API token was available we read the competition forum, public
+notebooks, the public leaderboard and the daily replay exports. This changed the
+plan.
+
+| Finding | Evidence | Consequence |
+|---|---|---|
+| The public field is dominated by one **PPO token-transformer** family | Public Code-tab scores: 1074.1 (busyaprime), 983.8 (Strong Agent Build), 966.5, 952.5, 854.2; top ladder 1596.7 | Reuse the mature public model instead of hand-tuning a heuristic |
+| **Turn order matters a lot** | Daily meta report: going first is worth +18–23 points in many matchups; agents choose first ~90% of the time | Force go-first (the public bundle already does) |
+| The meta shifted between October and November | Oct 11: Alakazam/Kadabra strongest (65–68%), Hydrapple popular. Nov 9 replays: Alakazam 1.9% of seats (~45% WR), Mega Lopunny 10.5% at 56.0% | Use the current Lopunny list with the public model; re-decking beats the shipped Alakazam list 81.9% |
+| The official SDK confirms our reverse-engineered search API | The public bundle ships `cg/api.py` with the same `AgentStart`/`SearchBegin(agent, input, len, ...)` signature | No risk left in the search binding; keep our shim, cite the official one |
+| The sample bundle is a `SearchAgent` with `cfg=None` (policy-only), rejection guard and 30 s panic valve | Public notebook output | Use it as the base; search is an optional upgrade, not a requirement |
+| BO3 shares one 600 s bank across all three games | Official forum answer | Public model uses ~16 s/BO3; plenty of headroom |
+
+The 2026-11-09 meta with proper archetype labels (the daily-meta notebook's
+rule: Mega ex first, then ex with ≥2 copies, then highest stage, then copies):
+
+| Archetype | Seats | Share | WR |
+|---|---:|---:|---:|
+| Mega Excadrill ex / Genesect ex | 1,337 | 39.5% | 50.7% |
+| Dragapult ex / Blaziken ex | 555 | 16.4% | 50.6% |
+| Dragapult ex / Drakloak | 393 | 11.6% | 47.6% |
+| **Mega Lopunny ex / Mega Froslass ex** | 357 | 10.5% | **56.0%** |
+| Lillie's Clefairy ex / Banette | 260 | 7.7% | 38.5% |
+| Mega Kangaskhan ex / Teal Mask Ogerpon ex | 139 | 4.1% | 58.3% |
+| Alakazam / Toucannon | 52 | 1.5% | 50.0% |
+| Alakazam / Kadabra | 15 | 0.4% | 26.7% |
+
+**Route decision (updated):** keep the from-scratch heuristic/search work as
+the reproducible research arm and documented negative/positive results, but
+make the **public PPO v3 + current-meta Lopunny deck** the submission base.
+Spend further effort on deck choice, turn order and optional search on top of
+the learned policy — not on re-inventing the policy.
+
 ## 4. Technical challenges
 
 1. **Hidden information** — opponent hand/deck/prizes are unknown. Search needs
@@ -204,12 +239,16 @@ Consequences for the project:
 | Determinized search (`search_begin`) | **verified** (native bindings recovered, 3.4k–5.7k nodes/s) | +4 pts on a strong base, +13 pts on a weak base | medium | **v2 improvement (shipped)** |
 | MCTS | low-medium (needs many rollouts; rollout cost + determinization quality) | unclear vs shallow search | high | only if search throughput is good |
 | Self-play RL / BC | replay dataset exists (1,694 games, 433k single-pick decisions); no GPU assumed | offline agreement 46.4%, but **40% online vs the heuristic** | high | tested as `bc_linear`; negative result |
+| **Reuse public PPO checkpoint** | high (public MIT notebook output, 20 MB, CPU inference 5–11 ms) | **90–100% vs all our agents**; public LB 1074.1 | low | **submission base (shipped candidate)** |
 
-**Chosen route (executed):** a legality-safe, card-DB-aware rule-based policy,
-plus a separate deck tournament over real-meta lists. Then the engine's forward
-search upgrades action selection (search_v1), and a linear imitation policy
-(bc_linear) is tested as a different algorithm. All arms are measured against
-the same opponent pool with seat-swapped games. Results: `EXPERIMENTS.md`.
+**Route (executed):** the first phase built a legality-safe, card-DB-aware rule
+policy, a real-meta deck tournament, a determinized search overlay and a linear
+imitation arm, all measured against the same opponent pool with seat-swapped
+games. Community reconnaissance then showed that the mature public PPO model is
+90–100% stronger than every from-scratch arm, so the **submission base is the
+public PPO v3 re-decked to the current-meta Lopunny list**; the from-scratch
+results remain as the reproducible research arm. Results: `EXPERIMENTS.md`,
+`docs/PUBLIC_BASELINE.md`.
 
 ## 6. Evaluation protocol (fixed before experiments)
 
