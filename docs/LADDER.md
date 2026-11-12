@@ -180,3 +180,17 @@ daily allowance resets, or on the final day.
 - Single readings are not evidence. The reliable signals are the local
   seat-swapped arena and the 1,694-match replay matrix; the ladder is the final
   judge but needs many matches to converge.
+
+## Morning snapshot (16:35 UTC)
+
+| Ref | Candidate | Score |
+|---:|---|---:|
+| 58273532 | v3 + Dragapult/Blaziken #8 | **987.5** |
+| 58273729 | v3 + Lopunny (reactivated) | 823.2 |
+| 58273092 | v3 + Lopunny (first run, inactive) | 1102.5 |
+| 58273236 | from-scratch search_v1 | 180.3 |
+
+Team leaderboard: **rank 150 / 712, score 987.5**. The stable core (pult8)
+climbed 943.7 → 987.5 while Lopunny stayed below it (823.2), consistent with the
+overnight conclusion: pult8 is the reliable climber; Lopunny is the high-variance
+hedge.

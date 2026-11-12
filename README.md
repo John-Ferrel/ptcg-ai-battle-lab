@@ -60,8 +60,8 @@ Details, ablations and caveats: `EXPERIMENTS.md`.
 | Ref | Agent | Status | Score observed |
 |---:|---|---|---:|
 | 58273092 | public v3 + Lopunny (first run) | COMPLETE (inactive) | **1102.5** (hot streak) |
-| 58273532 | public v3 + Dragapult/Blaziken | COMPLETE | **943.7** (stable best; team rank 178/712) |
-| 58273729 | public v3 + Lopunny (reactivated) | COMPLETE | 671.0 |
+| 58273532 | public v3 + Dragapult/Blaziken | COMPLETE | **987.5** (stable best; team rank 150/712) |
+| 58273729 | public v3 + Lopunny (reactivated) | COMPLETE | 823.2 |
 | 58273236 | from-scratch `search_v1` + Dragapult | COMPLETE | 180.3 |
 
 The ladder rating is noisy: the same Lopunny artifact scored 1102.5 and 692.5 on
