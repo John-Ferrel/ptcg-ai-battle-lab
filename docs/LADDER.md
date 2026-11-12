@@ -152,3 +152,31 @@ active submission**; team rank 167/712.
 The last daily submission is being kept in reserve. The deadline is
 2027-01-08, and the daily allowance resets, so there is no reason to burn it on
 another draw from the same noisy distribution.
+
+## Final active state (13:30 UTC) and decision
+
+| Ref | Candidate | Score |
+|---:|---|---:|
+| 58273532 | v3 + Dragapult/Blaziken #8 | **943.7** |
+| 58273729 | v3 + Lopunny (reactivated) | 671.0 |
+| 58273092 | v3 + Lopunny (first run, inactive) | 1102.5 |
+| 58273236 | from-scratch search_v1 | 180.3 |
+
+Team leaderboard: **rank 178/712, score 943.7**.
+
+**Decision: preserve the last daily submission.** The same Lopunny artifact has
+produced 1102.5, 749.8, 692.5, 793.9 and 671.0 across runs; Dragapult/Blaziken
+has produced 966.5, 822.9 and 943.7. The rating is a noisy instrument, and
+submitting another draw risks deactivating the stable 943.7 for no expected
+gain. The last submission is better spent on a genuinely new candidate (a newer
+public checkpoint or a deck with a higher field-weighted expectation) after the
+daily allowance resets, or on the final day.
+
+## What the real ladder taught us
+
+- The public PPO base is far above the from-scratch arm: ~943.7 vs 180.3.
+- Deck choice is real but second-order to the policy: the same model moved
+  between ~671 and ~1102 with different decks/runs.
+- Single readings are not evidence. The reliable signals are the local
+  seat-swapped arena and the 1,694-match replay matrix; the ladder is the final
+  judge but needs many matches to converge.
