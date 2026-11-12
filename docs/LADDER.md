@@ -132,3 +132,23 @@ of top-field opponents. Treat 1102.5 as a promising, not converged, rating.
 Team leaderboard row: rank **167/712**, score **966.5** at 13:15 UTC. The
 reactivated Lopunny is expected to keep climbing toward the first run's 1102.5;
 if it does, the team score will rise without another submission.
+
+## Noise check (13:20 UTC)
+
+| Ref | Candidate | 13:15 | 13:20 |
+|---:|---|---:|---:|
+| 58273092 | v3 + Lopunny, first run (inactive) | 1102.5 | 1102.5 |
+| 58273729 | v3 + Lopunny, reactivated | 749.8 | **692.5** |
+| 58273532 | v3 + Dragapult/Blaziken | 966.5 | **966.5** |
+| 58273236 | from-scratch search_v1 | 180.3 | 180.3 |
+
+The same Lopunny artifact scored 1102.5 on its first run and 692.5 on the
+reactivated run. This is consistent with the public community's warning that a
+single simulation rating is noisy (one public write-up re-submitted the same
+archive 13 times and saw 723.8–977.3). Treat 1102.5 as a hot streak, not a
+stable strength estimate. **Dragapult/Blaziken at 966.5 is the stable best
+active submission**; team rank 167/712.
+
+The last daily submission is being kept in reserve. The deadline is
+2027-01-08, and the daily allowance resets, so there is no reason to burn it on
+another draw from the same noisy distribution.

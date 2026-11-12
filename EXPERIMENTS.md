@@ -273,7 +273,7 @@ a website action; no leaderboard score can be claimed until it is done.
 | 58273236 | same, fixed loader guard | COMPLETE | **491.1** |
 | 58273532 | public v3 + Dragapult/Blaziken #8 | COMPLETE | **966.5** |
 | 58273092 | v3 + Lopunny (first run, inactive) | COMPLETE | **1102.5** |
-| 58273729 | public v3 + Lopunny (reactivated) | COMPLETE | 749.8 (climbing) |
+| 58273729 | public v3 + Lopunny (reactivated) | COMPLETE | 692.5 |
 
 The scores are **seeded** (600) and still moving: v3+Lopunny 600 → 687.6 → 879.5
 over three public episodes; the from-scratch search agent fell to 491.1. The competition's
@@ -338,3 +338,12 @@ PYTHONPATH=vendor .venv/bin/python scripts/arena.py \
 
 Exact per-game rows are in `results/` (git-ignored); summary JSONs are the
 source of the tables above.
+
+### Ladder noise
+
+The same Lopunny artifact scored **1102.5** on its first run and **692.5** on a
+reactivated run; Dragapult/Blaziken held **966.5**. A public write-up reported
+the same archive scoring 723.8–977.3 over 13 submissions. The ladder rating is
+therefore a noisy instrument; the local self-play and the replay-derived matchup
+matrix are the reliable signals. The best stable active submission is
+Dragapult/Blaziken at 966.5 (team rank 167/712 at 13:20 UTC).
