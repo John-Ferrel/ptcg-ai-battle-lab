@@ -15,7 +15,10 @@ import json
 import os
 import sys
 
-_HERE = os.path.dirname(os.path.abspath(__file__))
+try:
+    _HERE = os.path.dirname(os.path.abspath(__file__))
+except NameError:  # Kaggle's loader exec()s main.py without __file__
+    _HERE = os.getcwd() if os.path.exists(os.path.join(os.getcwd(), "deck.csv")) else "/kaggle_simulations/agent"
 if _HERE not in sys.path:
     sys.path.insert(0, _HERE)
 

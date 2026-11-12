@@ -41,6 +41,10 @@ cd ptcg-ai-battle
    `arena.py`.
 7. Card ids, names, attacks and scripts are **licensed competition data**. Do not
    paste the card DB into git; `data/` is git-ignored.
+8. **The Kaggle loader `exec()`s `main.py` without `__file__`.** Never use
+   `__file__` at module level without a `try/except NameError` fallback to cwd /
+   `/kaggle_simulations/agent`. Local arena success does not catch this; simulate
+   `exec(code, {"__name__": "__main__"})` with cwd = agent dir before submitting.
 
 ## Useful facts (measured)
 

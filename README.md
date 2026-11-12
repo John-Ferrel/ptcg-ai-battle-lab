@@ -55,6 +55,17 @@ forward-search overlay using the engine's native search API.
 
 Details, ablations and caveats: `EXPERIMENTS.md`.
 
+### Real ladder (2026-11-12)
+
+| Ref | Agent | Status | Score observed |
+|---:|---|---|---:|
+| 58273092 | public v3 + Lopunny | COMPLETE | 687.6 (seeded 600; first public match won) |
+| 58273236 | from-scratch `search_v1` + Dragapult | PENDING | — |
+
+Scores are dynamic and not converged; see `docs/LADDER.md`. The first
+from-scratch submission (58273114) errored because the Kaggle loader does not
+define `__file__`; all agents now guard it.
+
 ## What is here
 
 | Path | Purpose |

@@ -264,6 +264,23 @@ cheapest large gain (81.9% in same-model self-play).
 but the Kaggle API returns `403 ... accept its rules first`. Rules acceptance is
 a website action; no leaderboard score can be claimed until it is done.
 
+## E8 — Real ladder (in progress, dynamic scores)
+
+| Ref | Agent | Status | Official score (observed) |
+|---:|---|---|---:|
+| 58273092 | public v3 (Dipam, MIT) + Mega Lopunny #5 | COMPLETE | 687.6 at 12:47 UTC |
+| 58273114 | from-scratch `search_v1` + Dragapult | ERROR | — (`__file__` loader bug) |
+| 58273236 | same, fixed loader guard | PENDING | — |
+
+The 687.6 is a **seeded** score (600) after the first public episode (a win vs
+the Q-learning baseline `(ノ◡ <)`), not a converged rating. The competition's
+public score is Elo-like and only the latest two submissions are active. See
+`docs/LADDER.md` for the submission log and the loader bug.
+
+Do not compare 687.6 with the public v3's October score of 1074.1: different
+meta, different deck, and a single early match. Wait for rated episodes to
+accumulate before drawing conclusions.
+
 ## Anomalies / legality
 
 - All reported agents: **0 illegal actions, 0 exceptions** in every arena run
