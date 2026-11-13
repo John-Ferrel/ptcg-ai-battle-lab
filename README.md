@@ -12,48 +12,58 @@ ladder games, and a reproducible submission builder.
 > non-deterministic (no seed control); local results are win rates with Wilson
 > 95% CIs.
 
-## Project status (final)
+## Best result — official ladder (dynamic)
 
-**Primary artifact:** public PPO v3 (Dipam, MIT) + Dragapult/Blaziken #08, last
-observed **886.7** on the official ladder (team rank ~237/712). A Lopunny variant
-reached 1102.5 on one run but was 671–843 on others; the ladder is noisy.
+| What | Result |
+|---|---|
+| **Best observed publicScore** | **1102.5** — public PPO v3 + Mega Lopunny #05 (submission 58273092; a high-variance run, now inactive) |
+| **Stable core (last observed)** | **886.7** — public PPO v3 + Dragapult/Blaziken #08 (submission 58273532; rank ~237/712) |
+| **From-scratch best** | **180.3** — `search_v1` + Dragapult (submission 58273236) |
+| **Local head-to-head** | public v3 beats our `heuristic_v1` **90%** and our `search_v1` **100%**; `search_v1` beats `heuristic_v1` **61.3%** on Lopunny (600 games) |
 
-| Ref | Agent | Last observed |
-|---:|---|---:|
-| 58273532 | public v3 + Dragapult/Blaziken #08 | **886.7** |
-| 58273729 | public v3 + Lopunny #05 | 843.1 |
-| 58273092 | public v3 + Lopunny, first run (inactive) | 1102.5 |
-| 58273236 | from-scratch `search_v1` + Dragapult | 180.3 |
+> The ladder is not an instrument: the same Lopunny artifact produced 1102.5,
+> 843.1, 815.5, 671.0... across runs. **1102.5 is a hot streak, not a stable
+> strength estimate**; 886.7 is the last observation of the stable core.
+> See `docs/LADDER.md`.
 
-- Full narrative and next steps: **`FINAL_REPORT.md`**
-- Experiments and negative results: **`EXPERIMENTS.md`**
-- Research/route decisions: **`RESEARCH.md`**
-- Meta, ladder log, piloting gap, fine-tune: `docs/METAGAME.md`,
-  `docs/LADDER.md`, `docs/PILOT_GAP.md`, `docs/FINETUNE.md`
-- Full documentation index: `docs/INDEX.md`
+## Design philosophy
+
+1. **Research before building.** Read the rules, engine API and public field first; the public PPO baseline was 90–100% stronger than our from-scratch agents, so reusing it was the highest-value decision.
+2. **Reuse mature components, keep the code small.** The public v3 checkpoint is MIT and credited; our work is the harness, evaluation, meta analysis, deck choice and the experiments around it.
+3. **Legality by construction.** Every return is clamped to the offered options and `[minCount, maxCount]`; a crash, illegal index or timeout is an instant loss. All measured agents had 0 illegal / 0 exceptions.
+4. **Measure like a scientist.** Seat-swapped batches, Wilson 95% CIs, fixed decks for policy A/Bs, fixed pilots for deck A/Bs. Overlapping CIs mean "no measured difference".
+5. **The ladder is noisy; the local arena is the instrument.** Same-artifact variance is ±100+ points; decisions use local arenas plus 1,694/1,625-game replay matrices, the ladder only as a final noisy judge.
+6. **Separate deck and pilot, then evaluate the joint.** A deck can be the paper best response and still be unplayable by your pilot (Kangaskhan/Latias: 59% under its owner, 43.8% under v3 with stalls).
+7. **Climb path beats equilibrium.** A top-band specialist that cannot survive the lower bands never reaches its band. pult8 is the best climber (0.571 at 1000–1200, 0.540 at 1200–1400); Drakloak is a top-band specialist but weak at 1000–1200.
+8. **Keep negative results.** Greedy < random on the beginner deck; BC offline 46.4% but 40% online; search overlay 48%; fine-tune offline +11.6 but online 51.5%/37.0%. Offline agreement is not win rate.
+9. **Respect the data license.** The engine/card data is competition-use-only and is not redistributed; public replays are CC0; the public PPO code/weights are MIT. See `THIRD_PARTY_NOTICES.md`.
+
+## Project status
+
+Complete (2026-11-13). Full narrative: **`FINAL_REPORT.md`** · experiments: **`EXPERIMENTS.md`** · research: **`RESEARCH.md`** · docs index: **`docs/INDEX.md`**.
 
 ## Agents
 
-### Strongest local agent / submission candidate — public PPO v3 + Lopunny
+### Strongest local agent — public PPO v3 + Dragapult/Blaziken (core), Lopunny hedge
 
 Community mining found that the public field is dominated by one PPO
 token-transformer family (Dipam Chakraborty, MIT; new-card port and BO3 fixes by
-public notebooks). Its packaged output scores **1074.1** on the public ladder.
-We downloaded it, benchmarked it, and re-decked the same model to the current
-best archetype:
+public notebooks). Its packaged output scored **1074.1** on the public ladder.
+
+We benchmarked it and re-decked the same model to the current meta:
 
 | Matchup | Games | Win rate |
 |---|---:|---:|
 | public v3 (Alakazam) vs our `heuristic_v1` | 40 | **90.0%** |
 | public v3 (Alakazam) vs our `search_v1` | 40 | **100%** |
-| public v3 + Lopunny vs public v3 + Alakazam | 160 | **81.9%** |
-| public v3 + Lopunny vs v3 + Dragapult / Excadrill | 160 each | 48.1% / 49.4% |
+| v3 + Lopunny vs v3 + Alakazam | 160 | **81.9%** |
+| v3 + Lopunny vs v3 + Dragapult / Excadrill | 160 each | 48.1% / 49.4% |
 
-2026-11-09 meta: Alakazam is 1.9% of seats (~45% WR), Mega Lopunny is 10.5% at
-**56.0%**. Re-decking the public model to Lopunny is the cheapest large gain.
-See `docs/PUBLIC_BASELINE.md`. The tarball
-`submissions/public_v3_lop.tar.gz` is ready; uploading is blocked until the
-competition rules are accepted on the Kaggle website.
+The 2026-11-12 meta is Excadrill 35.9%, Dragapult/Blaziken 25.7%, Lopunny
+10.3%. **Dragapult/Blaziken #08 is the stable core** (best climber: field-WR
+0.571 at 1000–1200, 0.540 at 1200–1400). **Lopunny is the high-variance hedge**
+(best observed 1102.5, last observed 843.1). Both were submitted; see
+`docs/PUBLIC_BASELINE.md` and `docs/LADDER.md`.
 
 ### From-scratch agent — `search_v1` + Dragapult
 
@@ -76,20 +86,6 @@ forward-search overlay using the engine's native search API.
 | fine-tune v3 (BC on 11-12) | offline +11.6 pts, online 51.5% / Lopunny 37.0% — negative |
 
 Details, ablations and caveats: `EXPERIMENTS.md`.
-
-### Real ladder (2026-11-12)
-
-| Ref | Agent | Status | Score observed |
-|---:|---|---|---:|
-| 58273092 | public v3 + Lopunny (first run) | COMPLETE (inactive) | **1102.5** (hot streak) |
-| 58273532 | public v3 + Dragapult/Blaziken | COMPLETE | **886.7** (last observed; rank ~237/712) |
-| 58273729 | public v3 + Lopunny (reactivated) | COMPLETE | 843.1 |
-| 58273236 | from-scratch `search_v1` + Dragapult | COMPLETE | 180.3 |
-
-The ladder rating is noisy: the same Lopunny artifact scored 1102.5 and 692.5 on
-two runs. See `docs/LADDER.md`. The first from-scratch submission (58273114)
-errored because the Kaggle loader does not define `__file__`; all agents now
-guard it.
 
 ## What is here
 
@@ -204,7 +200,7 @@ PY
 .venv/bin/pytest -q
 ```
 
-## Design in one paragraph
+## How it works in one paragraph
 
 The engine is a process-global ctypes singleton. A battle is a loop of
 `obs["select"]` prompts; the agent returns indices into the offered options (or
