@@ -95,7 +95,8 @@ def main() -> int:
                     rows.append(r)
 
     errors = [r for r in rows if "error" in r]
-    rows = [r for r in rows if "error" not in r]
+    rows = [r for r in rows if "error" not in r
+            and r.get("rewards") and None not in r["rewards"]]
 
     # dedupe exact deck-pair repeats? keep all games.
     deck_counts: collections.Counter = collections.Counter()

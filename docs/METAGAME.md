@@ -215,3 +215,24 @@ So the climb path, not the equilibrium, decides the core: pult8 is the deck that
 gets you through the bands where Excadrill is 54% of the field, and it is still
 ~49% at 1400+. The top-band specialist is a paper counter until a pilot can
 execute it.
+
+## 10. 2026-11-12 update: the top band narrows
+
+11-12 raw replays (1,625 matches):
+
+| Band | Top decks | Best response |
+|---|---|---|
+| 1000–1200 | Excadrill 36.0% (0.413), pult8 25.8% (0.571), Drakloak 12.4% (0.548) | Kangaskhan/Ogerpon 0.632 |
+| 1200–1400 | Excadrill 29.6% (0.418), pult8 29.0% (0.540), Drakloak 14.9% (0.515) | Kangaskhan/Ogerpon 0.606 |
+| 1400+ | **Drakloak 45.2% (0.542)**, pult8 25.9% (0.382), Kangaskhan/Ogerpon 17.2% (0.629), Lopunny 11.7% (0.412) | Kangaskhan/Ogerpon 0.629 |
+
+The top band has narrowed to the Dragapult mirror + Kangaskhan. pult8 is the
+best climber through 1000–1400; at 1400+ the Drakloak variant is better in the
+real field (0.542 vs 0.382), but under our v3 pilot they are even (48.3% in 120
+games), and Drakloak is weak at 1000–1200 (33% on 11-11). That is the classic
+"climb vs top-band" tradeoff: a top-band specialist must still survive the lower
+bands.
+
+The theoretical top-band best response (Kangaskhan/Ogerpon 0.629) remains
+unplayable by v3. The practical portfolio is unchanged: pult8 core + Lopunny
+hedge.

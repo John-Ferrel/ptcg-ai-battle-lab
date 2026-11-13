@@ -138,3 +138,38 @@ Keep the active pair as **pult8_08 (core, 987.5)** + **Lopunny_05 (hedge,
 823.2)**. Do not spend the last daily submission on a candidate that is only
 equal in self-play. The next real lever is a stronger policy (new checkpoint or
 fine-tuning), not another deck from the same checkpoint.
+
+## 10. Morning update — 2026-11-12 data
+
+Raw 11-12 replays (1,625 matches) were published at 00:14 UTC. Parsed with the
+same pipeline (`results/meta_1112/`, `docs/META_1112*.md`).
+
+| Archetype | Share | Field-WR (all) | Field-WR (≥1200) |
+|---|---:|---:|---:|
+| Mega Excadrill / Genesect | 35.9% | 0.407 | 0.418 |
+| Dragapult / Blaziken | 25.7% | 0.565 | 0.540 |
+| Dragapult / Drakloak | 12.4% | 0.543 | 0.515 |
+| Mega Lopunny / Froslass | 10.3% | 0.508 | 0.497 |
+| **Kangaskhan / Ogerpon** | 6.1% | **0.628** | **0.606** |
+| Kangaskhan / Latias | 2.8% | 0.601 | 0.588 |
+
+Best response is still **Kangaskhan/Ogerpon** (0.628) — still not pilot-validated
+under v3 (29.1% round-robin; Kang/Latias 43.8% vs pult8 with stalls).
+
+**Top band (≥1400) shifted:**
+
+| Deck | Share | Field-WR |
+|---|---:|---:|
+| Dragapult / Drakloak | 45.2% | **0.542** |
+| Dragapult / Blaziken | 25.9% | 0.382 |
+| Kangaskhan / Ogerpon | 17.2% | 0.629 |
+| Mega Lopunny | 11.7% | 0.412 |
+
+So pult8 is a **climber** (best at 1000–1400), but at 1400+ the Dragapult mirror
+favors the Drakloak variant. Drakloak, however, was only 33% at 1000–1200 on
+11-11 — a top-band specialist that may struggle to climb. The practical core is
+still pult8; Lopunny remains the hedge; Drakloak is a "top-band specialist"
+option only if we accept the climb risk.
+
+**Ladder:** pult8 938.0 (rank 178), Lopunny 827.8, first Lopunny run 1102.5
+(inactive), from-scratch 180.3. No new submission; the active pair is preserved.
