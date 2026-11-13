@@ -52,6 +52,7 @@ forward-search overlay using the engine's native search API.
 | search vs h1 (Dragapult, 600 games) | **54.2%** (50.2–58.2%) |
 | final vs pre-iteration agent (200 games) | **90.0%** (85.1–93.4%) |
 | imitation baseline (BC) vs h1 | 40.0% — negative result |
+| fine-tune v3 (BC on 11-12) | offline +11.6 pts, online 51.5% / Lopunny 37.0% — negative |
 
 Details, ablations and caveats: `EXPERIMENTS.md`.
 

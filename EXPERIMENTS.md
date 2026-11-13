@@ -284,6 +284,22 @@ Do not compare 687.6 with the public v3's October score of 1074.1: different
 meta, different deck, and a single early match. Wait for rated episodes to
 accumulate before drawing conclusions.
 
+## E9 — Fine-tune the public model (BC) — negative
+
+Setup: public v3 checkpoint, 2026-11-12 replays, `min_score >= 1200`, 104,694
+train / 12,000 valid single-pick decisions, 2 epochs, lr 1e-4, T4 GPU.
+
+| Metric | Base | Fine-tuned |
+|---|---:|---:|
+| Offline valid top-1 | 53.48% | **65.04%** (+11.57) |
+| Online pult8 vs base (200) | — | **51.5%** (44.6–58.3%) |
+| Online Lopunny vs base (200) | — | **37.0%** (30.6–43.9%) |
+
+Go/no-go failed: offline imitation improved, online did not (and Lopunny got
+much worse). Train loss was ~1.5e7 (logits on a huge scale), and BC has no value
+signal; the model overfit the 11-12 action distribution. **Not submitted.**
+Details: `docs/FINETUNE.md`.
+
 ## Anomalies / legality
 
 - All reported agents: **0 illegal actions, 0 exceptions** in every arena run

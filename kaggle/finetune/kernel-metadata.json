@@ -1,0 +1,16 @@
+{
+  "id": "johnferrel/ptcg-v3-finetune",
+  "title": "ptcg-v3-finetune",
+  "code_file": "train.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": false,
+  "dataset_sources": [
+    "johnferrel/ptcg-v3-bundle",
+    "kaggle/the-pokemon-company-ptcg-ai-battle-challenge-playground-episodes-2026-11-12"
+  ],
+  "competition_sources": [],
+  "kernel_sources": []
+}
