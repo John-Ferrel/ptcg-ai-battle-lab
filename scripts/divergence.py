@@ -101,7 +101,9 @@ def semantic(obs: dict, opt: dict) -> tuple:
         i = opt.get("index", -1)
         return ("card", h[i]["id"] if 0 <= i < len(h) else None)
     if t == 10:
-        return ("ability", opt.get("area"), opt.get("index"))
+        player = opt.get("playerIndex", obs["current"]["yourIndex"])
+        cid = _area_card(obs, opt.get("area"), opt.get("index", -1), player)
+        return ("ability", cid if cid is not None else f"t{t}a{opt.get('area')}")
     return (f"type{t}",)
 
 

@@ -194,3 +194,17 @@ Team leaderboard: **rank 150 / 712, score 987.5**. The stable core (pult8)
 climbed 943.7 → 987.5 while Lopunny stayed below it (823.2), consistent with the
 overnight conclusion: pult8 is the reliable climber; Lopunny is the high-variance
 hedge.
+
+## Latest snapshot (2026-11-13, after piloting-gap research)
+
+| Ref | Candidate | Score |
+|---:|---|---:|
+| 58273532 | v3 + Dragapult/Blaziken #8 | **916.6** |
+| 58273729 | v3 + Lopunny (reactivated) | 815.5 |
+| 58273092 | v3 + Lopunny (first run, inactive) | 1102.5 |
+| 58273236 | from-scratch search_v1 | 180.3 |
+
+Team leaderboard: **rank 206 / 712, score 916.6**. The same noise band as before
+(916–987 for pult8, 671–827 for Lopunny). No new submission; the active pair is
+preserved. See `docs/PILOT_GAP.md` for the piloting-gap study and the negative
+damage-target reranker.
