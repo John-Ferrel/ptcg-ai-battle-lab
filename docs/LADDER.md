@@ -208,3 +208,16 @@ Team leaderboard: **rank 206 / 712, score 916.6**. The same noise band as before
 (916–987 for pult8, 671–827 for Lopunny). No new submission; the active pair is
 preserved. See `docs/PILOT_GAP.md` for the piloting-gap study and the negative
 damage-target reranker.
+
+## Post-fine-tune snapshot (2026-11-13)
+
+| Ref | Candidate | Score |
+|---:|---|---:|
+| 58273532 | v3 + Dragapult/Blaziken #8 | 886.7 |
+| 58273729 | v3 + Lopunny (reactivated) | 843.1 |
+| 58273092 | v3 + Lopunny (first run, inactive) | 1102.5 |
+| 58273236 | from-scratch search_v1 | 180.3 |
+
+Team rank 237/712 at this reading. No new submission; the fine-tuned model was
+**not** submitted (online 51.5% on pult8, 37.0% on Lopunny — see
+`docs/FINETUNE.md`).
