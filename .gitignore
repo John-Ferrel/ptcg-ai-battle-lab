@@ -7,3 +7,5 @@ results/
 submissions/*.tar.gz
 agents/*/card_meta.json
 *.log
+
+vendor/cg/

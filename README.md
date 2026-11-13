@@ -6,10 +6,30 @@ determinized forward-search overlay, a fast ctypes battle harness, a
 seat-swapped arena with confidence intervals, replay mining from 1,694 real
 ladder games, and a reproducible submission builder.
 
-> **Local numbers only.** No official Kaggle leaderboard score is claimed in
-> this repo. The engine is non-deterministic (no seed control), so results are
-> win rates with Wilson 95% CIs. There are no Kaggle credentials in this
-> environment.
+> **Status: research project complete (2026-11-13).** Real submissions were
+> made; the ladder is noisy (±100+ points for the same artifact), so the
+> reported scores are observations, not claims of stable strength. The engine is
+> non-deterministic (no seed control); local results are win rates with Wilson
+> 95% CIs.
+
+## Project status (final)
+
+**Primary artifact:** public PPO v3 (Dipam, MIT) + Dragapult/Blaziken #08, last
+observed **886.7** on the official ladder (team rank ~237/712). A Lopunny variant
+reached 1102.5 on one run but was 671–843 on others; the ladder is noisy.
+
+| Ref | Agent | Last observed |
+|---:|---|---:|
+| 58273532 | public v3 + Dragapult/Blaziken #08 | **886.7** |
+| 58273729 | public v3 + Lopunny #05 | 843.1 |
+| 58273092 | public v3 + Lopunny, first run (inactive) | 1102.5 |
+| 58273236 | from-scratch `search_v1` + Dragapult | 180.3 |
+
+- Full narrative and next steps: **`FINAL_REPORT.md`**
+- Experiments and negative results: **`EXPERIMENTS.md`**
+- Research/route decisions: **`RESEARCH.md`**
+- Meta, ladder log, piloting gap, fine-tune: `docs/METAGAME.md`,
+  `docs/LADDER.md`, `docs/PILOT_GAP.md`, `docs/FINETUNE.md`
 
 ## Agents
 
@@ -61,8 +81,8 @@ Details, ablations and caveats: `EXPERIMENTS.md`.
 | Ref | Agent | Status | Score observed |
 |---:|---|---|---:|
 | 58273092 | public v3 + Lopunny (first run) | COMPLETE (inactive) | **1102.5** (hot streak) |
-| 58273532 | public v3 + Dragapult/Blaziken | COMPLETE | **987.5** (stable best; team rank 150/712) |
-| 58273729 | public v3 + Lopunny (reactivated) | COMPLETE | 823.2 |
+| 58273532 | public v3 + Dragapult/Blaziken | COMPLETE | **886.7** (last observed; rank ~237/712) |
+| 58273729 | public v3 + Lopunny (reactivated) | COMPLETE | 843.1 |
 | 58273236 | from-scratch `search_v1` + Dragapult | COMPLETE | 180.3 |
 
 The ladder rating is noisy: the same Lopunny artifact scored 1102.5 and 692.5 on
@@ -81,10 +101,11 @@ guard it.
 | `decks/meta/` | top exact lists mined from real replays |
 | `src/ptcg_ai/` | card DB, deck validation, obs helpers, harness, replay parser |
 | `scripts/` | arena, gauntlet, meta analysis, replay mining, divergence, BC, submission builder |
-| `vendor/cg/` | recovered `cg` SDK shim (enums, card data, forward-search bindings) |
+| `vendor/cg/` | official `cg` SDK (not included; copy from competition Data — see `vendor/README.md`) |
 | `docs/` | engineering notes, deck tournament, BC report, search API, public baseline |
 | `RESEARCH.md` | competition/engine/prior-art research and route decisions |
 | `EXPERIMENTS.md` | protocol, all measured results, threats to validity |
+| `FINAL_REPORT.md` | final progress summary, negative results, distribution notes |
 
 ## Install
 
@@ -98,6 +119,10 @@ python3 -m venv .venv
 database is licensed competition data and is **not** committed (`data/` and
 `agents/*/card_meta.json` are git-ignored); `prepare_agents.py` regenerates both
 from the installed engine.
+
+The search arm also needs the official `cg` SDK at `vendor/cg/`. It is **not**
+included because the engine is competition-use-only; copy it from the
+competition Data page (see `vendor/README.md`).
 
 ## Run a game / a batch
 
@@ -192,8 +217,15 @@ clearly better. After the public-baseline measurement showed a ~90–100% gap, t
 project pivoted: the mature public PPO model is the submission base, and our
 experiments now target its deck, turn order and search configuration.
 
-## License / data
+## Distribution & licenses
 
-Code: MIT (see `LICENSE`). Pokémon card data, the engine and the replay datasets
-belong to their owners and are used only locally for the competition; they are
-not redistributed in this repository.
+- **Code:** MIT (`LICENSE`).
+- **Not included:** the `ptcgProgram` engine, card database, official `cg` SDK,
+  raw replay files, and the public PPO checkpoint. The engine is
+  competition-use-only: no redistribution, delete copies after the competition.
+- **Replay data:** the Kaggle daily episodes and Darren Sheehan's parsed ladder
+  dataset are CC0; only derived statistics are committed.
+- **Public PPO v3:** Dipam Chakraborty's code/weights are MIT;
+  `scripts/fetch_public_v3.py` downloads the public notebook output at runtime.
+- See `THIRD_PARTY_NOTICES.md` for attribution and `vendor/README.md` for the
+  SDK terms.
