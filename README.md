@@ -30,6 +30,7 @@ reached 1102.5 on one run but was 671–843 on others; the ladder is noisy.
 - Research/route decisions: **`RESEARCH.md`**
 - Meta, ladder log, piloting gap, fine-tune: `docs/METAGAME.md`,
   `docs/LADDER.md`, `docs/PILOT_GAP.md`, `docs/FINETUNE.md`
+- Full documentation index: `docs/INDEX.md`
 
 ## Agents
 
