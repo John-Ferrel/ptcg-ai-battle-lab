@@ -1,5 +1,10 @@
 # PTCG AI Battle Lab
 
+![Python](https://img.shields.io/badge/python-3.12-blue)
+![Tests](https://img.shields.io/badge/tests-6%20passed-brightgreen)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Kaggle](https://img.shields.io/badge/Kaggle-PTCG%20Playground-20BEFF)
+
 An experimental Pokémon TCG battle agent for the Kaggle **PTCG AI Battle
 Challenge Playground** (cabt engine v2): a legality-safe rule engine, a
 determinized forward-search overlay, a fast ctypes battle harness, a
@@ -11,6 +16,14 @@ ladder games, and a reproducible submission builder.
 > reported scores are observations, not claims of stable strength. The engine is
 > non-deterministic (no seed control); local results are win rates with Wilson
 > 95% CIs.
+
+## Highlights
+
+- **Fast local lab:** ctypes battle loop at ~10 ms/game; seat-swapped arena with Wilson CIs; meta-weighted gauntlet and BO3 arena.
+- **Recovered native search API:** `AgentStart`/`SearchBegin`/`SearchStep` bound with ctypes; the official SDK later confirmed the exact signature.
+- **Real replay mining:** 1,694 (11-09) + 1,625 (11-12) ladder matches; archetypes, matchup matrices, climb path, 65.2% pilot agreement.
+- **Real ladder:** best observed **1102.5**; stable core **886.7**; from-scratch `search_v1` **180.3**.
+- **Negative results kept:** linear BC, search overlay, hand-written reranker, BC fine-tune — all measured and documented.
 
 ## Best result — official ladder (dynamic)
 
@@ -26,6 +39,8 @@ ladder games, and a reproducible submission builder.
 > strength estimate**; 886.7 is the last observation of the stable core.
 > See `docs/LADDER.md`.
 
+![Ladder snapshots](docs/figures/ladder_noise.png)
+
 ## Design philosophy
 
 1. **Research before building.** Read the rules, engine API and public field first; the public PPO baseline was 90–100% stronger than our from-scratch agents, so reusing it was the highest-value decision.
@@ -38,9 +53,46 @@ ladder games, and a reproducible submission builder.
 8. **Keep negative results.** Greedy < random on the beginner deck; BC offline 46.4% but 40% online; search overlay 48%; fine-tune offline +11.6 but online 51.5%/37.0%. Offline agreement is not win rate.
 9. **Respect the data license.** The engine/card data is competition-use-only and is not redistributed; public replays are CC0; the public PPO code/weights are MIT. See `THIRD_PARTY_NOTICES.md`.
 
+## What the data showed
+
+![11-12 meta](docs/figures/meta_1112.png)
+
+![Climb path](docs/figures/climb_path.png)
+
+![11-12 matchup](docs/figures/matchup_1112.png)
+
+The meta is **non-transitive**: Excadrill beats Lopunny, Lopunny beats
+Kangaskhan, Kangaskhan beats Excadrill. The paper best response (Kangaskhan /
+Ogerpon, field-WR 0.628) was **not executable by the public v3 pilot** (29.1% in
+its own round-robin), so the practical core is the best *climber*: pult8 wins the
+1000–1400 bands, while Drakloak is the top-band specialist. See
+`docs/METAGAME.md`.
+
 ## Project status
 
 Complete (2026-11-13). Full narrative: **`FINAL_REPORT.md`** · experiments: **`EXPERIMENTS.md`** · research: **`RESEARCH.md`** · docs index: **`docs/INDEX.md`**.
+
+## Architecture
+
+```mermaid
+flowchart LR
+  R[Kaggle replays] --> P[replay parser / archetypes]
+  E[cabt engine] --> H[ctypes harness]
+  H --> A[arena / gauntlet / BO3]
+  A --> X[heuristic_v1]
+  A --> S[search_v1]
+  A --> V[public PPO v3]
+  P --> M[meta / matchup / climb path]
+  M --> D[deck choice]
+  V --> D
+  D --> B[submission builder]
+  B --> L[Kaggle ladder]
+  L --> R
+```
+
+Everything is evaluated twice: local seat-swapped games (fast, controlled) and
+the official ladder (slow, noisy). The ladder feeds the next day's replay
+analysis; deck choice is a function of the current meta, not a permanent answer.
 
 ## Agents
 
