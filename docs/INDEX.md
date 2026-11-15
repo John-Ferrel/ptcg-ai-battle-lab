@@ -16,7 +16,7 @@ Start with these three:
 | `docs/COMMUNITY.md` | forum threads, public notebooks, scores, what the public field does |
 | `docs/PUBLIC_BASELINE.md` | public PPO v3: attribution, local benchmarks, ladder submissions |
 | `docs/METAGAME.md` | non-transitive meta, 3-cycles, best response, climb path, counter method |
-| `docs/META_1112*.md`, `docs/META_1111*.md`, `docs/META_GAME*.md` | generated meta reports |
+| `docs/META_1114.md`, `docs/META_1112*.md`, `docs/META_1111*.md`, `docs/META_GAME*.md` | generated meta reports |
 
 ## Experiments
 

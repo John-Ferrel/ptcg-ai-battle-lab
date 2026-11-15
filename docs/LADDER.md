@@ -221,3 +221,17 @@ damage-target reranker.
 Team rank 237/712 at this reading. No new submission; the fine-tuned model was
 **not** submitted (online 51.5% on pult8, 37.0% on Lopunny — see
 `docs/FINETUNE.md`).
+
+## 2026-11-15 snapshot
+
+| Ref | Candidate | Score |
+|---:|---|---:|
+| 58273532 | v3 + Dragapult/Blaziken #8 | 859.5 |
+| 58273729 | v3 + Lopunny (reactivated) | 859.9 |
+| 58273092 | v3 + Lopunny (first run, inactive) | 1102.5 |
+| 58273236 | from-scratch search_v1 | 180.3 |
+
+Team rank 270/712. No new submissions. Both active artifacts converged to
+~860; the 1102.5 first Lopunny run remains inactive. The 11-14 meta report is
+`docs/META_1114.md` (Excadrill back to 40.9%; Dragapult/Drakloak is the current
+paper best response at 0.589, but v3 pilots it only ~even with pult8).
